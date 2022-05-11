@@ -24,6 +24,15 @@ class World {
         this.level.update();
         this.player.update();
 
+        if (
+            this.player.pos.isSup(
+                new Vec2(this.level.width - 1, this.level.height - 1)
+            ) ||
+            new Vec2(0, 0).isSup(this.player.pos)
+        ) {
+            this.player.pos.copy(this.player.oldPos);
+        }
+
         switch (this.level.getObstacle(this.player.pos)) {
             case 2: {
                 const dis = Vec2.sub(this.player.displayPos, this.player.pos);
@@ -218,7 +227,7 @@ class Vec2 {
     }
 
     isSup(vec2) {
-        return this.x > vec2.x && this.y > vec2.y;
+        return this.x > vec2.x || this.y > vec2.y;
     }
 
     isSup_of_cste(cste) {
