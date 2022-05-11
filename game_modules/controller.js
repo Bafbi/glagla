@@ -1,5 +1,6 @@
 export class Controller {
     constructor() {
+        // this.active = false;
         this.left = new ButtonInput();
         this.right = new ButtonInput();
         this.up = new ButtonInput();
@@ -7,6 +8,7 @@ export class Controller {
     }
     keyDownUp(type, code) {
         let down = type == "keydown" ? true : false;
+        // if (this.down != down) this.active = down;
 
         switch (code) {
             case "KeyA":

@@ -15,26 +15,27 @@ import { Engine } from "./game_modules/engine.js";
 
 function render() {
     display.drawBackground();
-    display.drawLevel(game.world.level);
-    display.drawPlayer(game.world.player.displayX, game.world.player.displayY);
+    display.drawTileLevel(game.world.level.texture, game.world.level.width);
+    display.drawSpriteLevel(game.world.level.obstacle, game.world.level.width);
+    display.drawPlayer(game.world.player.displayPos);
     display.render();
 }
 function update() {
-    if (!game.world.player.onIce) {
+    if (!game.world.player.moving) {
         if (controller.left.active) {
-            game.world.player.moveLeft();
+            game.world.player.move({ x: -1, y: 0 });
             controller.left.active = false;
         }
         if (controller.right.active) {
-            game.world.player.moveRight();
+            game.world.player.move({ x: 1, y: 0 });
             controller.right.active = false;
         }
         if (controller.up.active) {
-            game.world.player.moveUp();
+            game.world.player.move({ x: 0, y: -1 });
             controller.up.active = false;
         }
         if (controller.down.active) {
-            game.world.player.moveDown();
+            game.world.player.move({ x: 0, y: 1 });
             controller.down.active = false;
         }
     }
@@ -78,7 +79,8 @@ display.buffer.canvas.width =
     game.world.level.width * display.tileSheet.tileSize;
 
 display.background.image.src = "./game_modules/texture/stone-bg.png";
-display.tileSheet.image.src = "./game_modules/texture/spritesheet2.png";
+display.tileSheet.image.src = "./game_modules/texture/tilesheet_stony.png";
+display.spriteSheet.image.src = "./game_modules/texture/spritesheet_stony.png";
 display.player.image.src = "./game_modules/texture/spriteplayer.png";
 
 display.background.image.onload = () => {

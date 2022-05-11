@@ -5,6 +5,7 @@ export class Display {
         this.buffer = document.createElement("canvas").getContext("2d");
         this.context = canvas.getContext("2d");
         this.tileSheet = new TileSheet(16, 5);
+        this.spriteSheet = new TileSheet(16, 5);
         this.player = new Sprite(12);
         this.background = new TileSheet(32, 1);
     }
@@ -57,9 +58,37 @@ export class Display {
         );
     }
 
-    drawLevel(level) {
-        level.texture.forEach((value, index) => {
-            if (value == -1) {
+    // drawLevel(level) {
+    //     level.texture.forEach((value, index) => {
+    //         if (value < 0) {
+    //             return;
+    //         }
+    //         const source_x =
+    //             (value % this.tileSheet.columns) * this.tileSheet.tileSize;
+    //         const source_y =
+    //             Math.floor(value / this.tileSheet.columns) *
+    //             this.tileSheet.tileSize;
+    //         const destination_x =
+    //             (index % level.width) * this.tileSheet.tileSize;
+    //         const destination_y =
+    //             Math.floor(index / level.width) * this.tileSheet.tileSize;
+
+    //         this.buffer.drawImage(
+    //             this.tileSheet.image,
+    //             source_x,
+    //             source_y,
+    //             this.tileSheet.tileSize,
+    //             this.tileSheet.tileSize,
+    //             destination_x,
+    //             destination_y,
+    //             this.tileSheet.tileSize,
+    //             this.tileSheet.tileSize
+    //         );
+    //     });
+    // }
+    drawTileLevel(levelTexture, width) {
+        levelTexture.forEach((value, index) => {
+            if (value < 0) {
                 return;
             }
             const source_x =
@@ -67,10 +96,9 @@ export class Display {
             const source_y =
                 Math.floor(value / this.tileSheet.columns) *
                 this.tileSheet.tileSize;
-            const destination_x =
-                (index % level.width) * this.tileSheet.tileSize;
+            const destination_x = (index % width) * this.tileSheet.tileSize;
             const destination_y =
-                Math.floor(index / level.width) * this.tileSheet.tileSize;
+                Math.floor(index / width) * this.tileSheet.tileSize;
 
             this.buffer.drawImage(
                 this.tileSheet.image,
@@ -85,16 +113,43 @@ export class Display {
             );
         });
     }
-    drawPlayer(x, y) {
+    drawSpriteLevel(levelData, width) {
+        levelData.forEach((value, index) => {
+            if (value < 0) {
+                return;
+            }
+            const source_x =
+                (value % this.spriteSheet.columns) * this.spriteSheet.tileSize;
+            const source_y =
+                Math.floor(value / this.spriteSheet.columns) *
+                this.spriteSheet.tileSize;
+            const destination_x = (index % width) * this.spriteSheet.tileSize;
+            const destination_y =
+                Math.floor(index / width) * this.spriteSheet.tileSize;
+
+            this.buffer.drawImage(
+                this.spriteSheet.image,
+                source_x,
+                source_y,
+                this.spriteSheet.tileSize,
+                this.spriteSheet.tileSize,
+                destination_x,
+                destination_y,
+                this.spriteSheet.tileSize,
+                this.spriteSheet.tileSize
+            );
+        });
+    }
+    drawPlayer(vec2) {
         this.buffer.drawImage(
             this.player.image,
             2,
             0,
             this.player.tileSize,
             this.player.tileSize,
-            Math.round(x * this.tileSheet.tileSize) +
+            Math.round(vec2.x * this.tileSheet.tileSize) +
                 (this.tileSheet.tileSize - this.player.tileSize),
-            Math.round(y * this.tileSheet.tileSize) +
+            Math.round(vec2.y * this.tileSheet.tileSize) +
                 (this.tileSheet.tileSize - this.player.tileSize) / 2,
             this.player.tileSize,
             this.player.tileSize
