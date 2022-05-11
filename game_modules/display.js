@@ -7,17 +7,13 @@ export class Display {
         this.tileSheet = new TileSheet(16, 5);
         this.spriteSheet = new TileSheet(16, 5);
         this.player = new Sprite(12);
-        this.background = new TileSheet(32, 1);
+        this.background = new TileSheet(16, 1);
+        this.camera = new Camera("ALL");
     }
 
-    fill(color) {
-        this.buffer.fillStyle = color;
-        this.buffer.fillRect(
-            0,
-            0,
-            this.buffer.canvas.width,
-            this.buffer.canvas.height
-        );
+    fill(context, color) {
+        context.fillStyle = color;
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     }
     drawRectangle(x, y, width, height, color) {
         this.buffer.fillStyle = color;
@@ -27,6 +23,7 @@ export class Display {
         this.context.fillStyle = color;
         this.context.fillText(text, x, y);
     }
+
     drawGrid(worldColumns, worldRows, color) {
         this.buffer.fillStyle = color;
         for (let columns = 0; columns < worldColumns; columns++) {
@@ -45,17 +42,6 @@ export class Display {
                 2
             );
         }
-    }
-    drawCollideTile(entity, color) {
-        this.drawRectangle(
-            Math.floor(entity.getLeft() / this.tileSheet.tileSize) *
-                this.tileSheet.tileSize,
-            Math.floor(entity.getBottom() / this.tileSheet.tileSize) *
-                this.tileSheet.tileSize,
-            this.tileSheet.tileSize,
-            this.tileSheet.tileSize,
-            color
-        );
     }
 
     // drawLevel(level) {
@@ -185,12 +171,13 @@ export class Display {
     }
 
     render() {
+        this.fill(this.context, "black");
         this.context.drawImage(
             this.buffer.canvas,
-            0,
-            0,
-            this.buffer.canvas.width,
-            this.buffer.canvas.height,
+            this.camera.pos1.x,
+            this.camera.pos1.y,
+            this.camera.pos2.x,
+            this.camera.pos2.y,
             0,
             0,
             this.context.canvas.width,
@@ -210,6 +197,42 @@ export class Display {
         this.context.imageSmoothingEnabled = false;
         this.render();
     }
+
+    updateCamera(playerPos, zoom) {
+        switch (this.camera.mode) {
+            case "ALL":
+                {
+                    this.camera.pos1 = {
+                        x: 0,
+                        y: 0,
+                    };
+                    this.camera.pos2 = {
+                        x: this.buffer.canvas.width,
+                        y: this.buffer.canvas.height,
+                    };
+                }
+                break;
+            case "PLAYER":
+                {
+                    const ratio =
+                        this.buffer.canvas.width / this.buffer.canvas.height;
+                    const x = playerPos.x * this.tileSheet.tileSize;
+                    const y = playerPos.y * this.tileSheet.tileSize;
+                    this.camera.pos1 = {
+                        x: x - (this.tileSheet.tileSize + zoom * 2) / ratio,
+                        y: y - zoom,
+                    };
+                    this.camera.pos2 = {
+                        x: (this.tileSheet.tileSize + zoom * 2) * ratio,
+                        y: this.tileSheet.tileSize + zoom * 2,
+                    };
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 class TileSheet {
@@ -223,5 +246,13 @@ class Sprite {
     constructor(tile_size) {
         this.image = new Image();
         this.tileSize = tile_size;
+    }
+}
+
+class Camera {
+    constructor(mode) {
+        this.mode = mode;
+        this.pos1 = { x: 0, y: 0 };
+        this.pos2 = { x: 10, y: 10 };
     }
 }

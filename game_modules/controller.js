@@ -1,11 +1,12 @@
 export class Controller {
     constructor() {
         // this.active = false;
-        this.left = new ButtonInput("KeyA");
-        this.right = new ButtonInput("KeyD");
-        this.up = new ButtonInput("KeyW");
-        this.down = new ButtonInput("KeyS");
-        this.reset = new ButtonInput("KeyR");
+        this.left = new ButtonInput("q");
+        this.right = new ButtonInput("d");
+        this.up = new ButtonInput("z");
+        this.down = new ButtonInput("s");
+        this.reset = new ButtonInput("r");
+        this.cam = new ButtonInput("m");
     }
     keyDownUp(type, code) {
         let down = type == "keydown" ? true : false;

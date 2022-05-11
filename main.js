@@ -18,6 +18,7 @@ function render() {
     display.drawTileLevel(game.world.level.texture, game.world.level.width);
     display.drawSpriteLevel(game.world.level.obstacle, game.world.level.width);
     display.drawPlayer(game.world.player.displayPos);
+    display.updateCamera(game.world.player.pos, 20);
     display.render();
 }
 function update() {
@@ -41,8 +42,21 @@ function update() {
         if (controller.reset.active) {
             game.reset();
         }
+        if (controller.cam.active) {
+            switch (display.camera.mode) {
+                case "ALL":
+                    display.camera.mode = "PLAYER";
+                    break;
+                case "PLAYER":
+                    display.camera.mode = "ALL";
+                    break;
+                default:
+                    break;
+            }
+            controller.cam.active = false;
+        }
     }
-    // console.log(game.world.player);
+    // console.log(display.camera);
     game.update();
 }
 
@@ -60,10 +74,10 @@ const engine = new Engine(1000 / 30, render, update);
 /////////////////
 
 window.addEventListener("keydown", (event) =>
-    controller.keyDownUp(event.type, event.code)
+    controller.keyDownUp(event.type, event.key)
 );
 window.addEventListener("keyup", (event) =>
-    controller.keyDownUp(event.type, event.code)
+    controller.keyDownUp(event.type, event.key)
 );
 window.addEventListener("resize", () =>
     display.resize(
