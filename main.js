@@ -38,6 +38,9 @@ function update() {
             game.world.player.move({ x: 0, y: 1 });
             controller.down.active = false;
         }
+        if (controller.reset.active) {
+            game.reset();
+        }
     }
     // console.log(game.world.player);
     game.update();

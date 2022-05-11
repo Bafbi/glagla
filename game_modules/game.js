@@ -8,11 +8,15 @@ export class Game {
     update() {
         this.world.update();
     }
+
+    reset() {
+        this.world = new World();
+    }
 }
 
 class World {
     constructor() {
-        this.level = new Level(mapFile);
+        this.level = new Level(JSON.parse(JSON.stringify(mapFile)));
         this.player = new Player();
     }
 
@@ -48,7 +52,7 @@ class World {
                 break;
             case 3:
                 {
-                    this.player.pos.set(2, 2);
+                    this.player.freeze = true;
                 }
                 break;
             default:
@@ -62,11 +66,11 @@ class World {
 ///////////
 
 class Level {
-    constructor(mapFile) {
-        this.height = mapFile.height;
-        this.width = mapFile.width;
-        this.texture = mapFile.texture;
-        this.obstacle = mapFile.data;
+    constructor(map) {
+        this.height = map.height;
+        this.width = map.width;
+        this.texture = map.texture;
+        this.obstacle = map.data;
     }
 
     getObstacle(vec2) {
@@ -96,6 +100,7 @@ class Player {
         this.motion = new Vec2(0, 0);
         this.acceleration = new Vec2(0, 0);
         this.moving = false;
+        this.freeze = false;
         this.direction = new Vec2(0, 0);
     }
 
@@ -133,9 +138,12 @@ class Player {
             this.motion.y = 0;
         }
 
+        const dis = this.distancePosDisplay();
         if (
-            this.pos.x == Math.round(this.displayPos.x) &&
-            this.pos.y == Math.round(this.displayPos.y)
+            dis.x < 0.1 &&
+            dis.y < 0.1
+            // this.pos.x == Math.round(this.displayPos.x) &&
+            // this.pos.y == Math.round(this.displayPos.y)
         ) {
             this.moving = false;
         }
@@ -153,10 +161,12 @@ class Player {
     }
 
     move(direction) {
-        this.updateOld();
-        this.moving = true;
-        this.direction.copy(direction);
-        this.pos.add(direction);
+        if (!this.freeze) {
+            this.updateOld();
+            this.moving = true;
+            this.direction.copy(direction);
+            this.pos.add(direction);
+        }
     }
 
     updateOld() {
@@ -165,6 +175,11 @@ class Player {
 
     updateOldDisplay() {
         this.oldDisplayPos.copy(this.displayPos);
+    }
+
+    distancePosDisplay() {
+        const dis = Vec2.sub(this.displayPos, this.pos);
+        return { x: Math.abs(dis.x), y: Math.abs(dis.y) };
     }
 }
 
@@ -204,6 +219,10 @@ class Vec2 {
 
     isSup(vec2) {
         return this.x > vec2.x && this.y > vec2.y;
+    }
+
+    isSup_of_cste(cste) {
+        return this.x > cste || this.y > cste;
     }
 
     reset() {
