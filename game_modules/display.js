@@ -8,7 +8,7 @@ export class Display {
         this.spriteSheet = new TileSheet(16, 5);
         this.player = new Sprite(12);
         this.background = new TileSheet(16, 1);
-        this.camera = new Camera("ALL");
+        this.camera = new Camera();
     }
 
     fill(context, color) {
@@ -198,7 +198,7 @@ export class Display {
         this.render();
     }
 
-    updateCamera(playerPos, zoom) {
+    updateCamera() {
         switch (this.camera.mode) {
             case "ALL":
                 {
@@ -214,10 +214,11 @@ export class Display {
                 break;
             case "PLAYER":
                 {
+                    const zoom = this.camera.zoom;
                     const ratio =
                         this.buffer.canvas.width / this.buffer.canvas.height;
-                    const x = playerPos.x * this.tileSheet.tileSize;
-                    const y = playerPos.y * this.tileSheet.tileSize;
+                    const x = this.camera.posC.x * this.tileSheet.tileSize;
+                    const y = this.camera.posC.y * this.tileSheet.tileSize;
                     this.camera.pos1 = {
                         x: x - (this.tileSheet.tileSize + zoom * 2) / ratio,
                         y: y - zoom,
@@ -250,9 +251,11 @@ class Sprite {
 }
 
 class Camera {
-    constructor(mode) {
-        this.mode = mode;
+    constructor() {
+        this.mode = "ALL";
+        this.zoom = 10;
         this.pos1 = { x: 0, y: 0 };
         this.pos2 = { x: 10, y: 10 };
+        this.posC = { x: 2, y: 2 };
     }
 }

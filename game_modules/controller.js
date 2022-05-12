@@ -1,13 +1,5 @@
 export class Controller {
-    constructor() {
-        // this.active = false;
-        this.left = new ButtonInput("q");
-        this.right = new ButtonInput("d");
-        this.up = new ButtonInput("z");
-        this.down = new ButtonInput("s");
-        this.reset = new ButtonInput("r");
-        this.cam = new ButtonInput("m");
-    }
+    constructor() {}
     keyDownUp(type, code) {
         let down = type == "keydown" ? true : false;
 
@@ -15,13 +7,19 @@ export class Controller {
             if (this[key].keyCode == code) this[key].setState(down);
         });
     }
+
+    register(name, key, callback, slow = false) {
+        this[name] = new ButtonInput(key, callback, slow);
+    }
 }
 
 class ButtonInput {
-    constructor(keyCode) {
+    constructor(keyCode, callback, slow) {
         this.down = false;
         this.active = false;
         this.keyCode = keyCode;
+        this.callback = callback;
+        this.slow = slow;
     }
     setState(down) {
         if (this.down != down) this.active = down;

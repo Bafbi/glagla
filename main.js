@@ -18,45 +18,17 @@ function render() {
     display.drawTileLevel(game.world.level.texture, game.world.level.width);
     display.drawSpriteLevel(game.world.level.obstacle, game.world.level.width);
     display.drawPlayer(game.world.player.displayPos);
-    display.updateCamera(game.world.player.pos, 20);
+    display.updateCamera();
     display.render();
 }
 function update() {
-    if (!game.world.player.moving) {
-        if (controller.left.active) {
-            game.world.player.move({ x: -1, y: 0 });
-            controller.left.active = false;
+    Object.keys(controller).forEach((key, index) => {
+        if (controller[key].active) {
+            controller[key].callback();
+            controller[key].active = controller[key].slow ? false : true;
         }
-        if (controller.right.active) {
-            game.world.player.move({ x: 1, y: 0 });
-            controller.right.active = false;
-        }
-        if (controller.up.active) {
-            game.world.player.move({ x: 0, y: -1 });
-            controller.up.active = false;
-        }
-        if (controller.down.active) {
-            game.world.player.move({ x: 0, y: 1 });
-            controller.down.active = false;
-        }
-        if (controller.reset.active) {
-            game.reset();
-        }
-        if (controller.cam.active) {
-            switch (display.camera.mode) {
-                case "ALL":
-                    display.camera.mode = "PLAYER";
-                    break;
-                case "PLAYER":
-                    display.camera.mode = "ALL";
-                    break;
-                default:
-                    break;
-            }
-            controller.cam.active = false;
-        }
-    }
-    // console.log(display.camera);
+    });
+
     game.update();
 }
 
@@ -86,6 +58,93 @@ window.addEventListener("resize", () =>
         game.world.level.height / game.world.level.width
     )
 );
+window.addEventListener("wheel", (event) => {
+    display.camera.zoom += event.deltaY * 0.01;
+});
+
+let mouseDown = false;
+let startX;
+let startY;
+window.addEventListener("mousedown", (event) => {
+    mouseDown = true;
+    startX = event.clientX;
+    startY = event.clientY;
+});
+window.addEventListener("mousemove", (event) => {
+    if (mouseDown) {
+        display.camera.posC.x += (event.clientX - startX) * -0.02;
+        display.camera.posC.y += (event.clientY - startY) * -0.02;
+        startX = event.clientX;
+        startY = event.clientY;
+    }
+});
+window.addEventListener("mouseup", (event) => {
+    mouseDown = false;
+});
+
+//////////////
+// Register //
+//////////////
+
+controller.register(
+    "cam",
+    "m",
+    () => {
+        switch (display.camera.mode) {
+            case "ALL":
+                display.camera.mode = "PLAYER";
+                display.camera.posC.x = game.world.player.pos.x;
+                display.camera.posC.y = game.world.player.pos.y;
+                break;
+            case "PLAYER":
+                display.camera.mode = "ALL";
+                break;
+            default:
+                break;
+        }
+    },
+    true
+);
+controller.register(
+    "reset",
+    "r",
+    () => {
+        game.reset();
+    },
+    true
+);
+controller.register(
+    "up",
+    "z",
+    () => {
+        if (!game.world.player.moving) game.world.player.move({ x: 0, y: -1 });
+    },
+    true
+);
+controller.register(
+    "right",
+    "d",
+    () => {
+        if (!game.world.player.moving) game.world.player.move({ x: 1, y: 0 });
+    },
+    true
+);
+controller.register(
+    "down",
+    "s",
+    () => {
+        if (!game.world.player.moving) game.world.player.move({ x: 0, y: 1 });
+    },
+    true
+);
+controller.register(
+    "left",
+    "q",
+    () => {
+        if (!game.world.player.moving) game.world.player.move({ x: -1, y: 0 });
+    },
+    true
+);
 
 //////////////////
 /// Initialize ///
@@ -94,6 +153,9 @@ display.buffer.canvas.height =
     game.world.level.height * display.tileSheet.tileSize;
 display.buffer.canvas.width =
     game.world.level.width * display.tileSheet.tileSize;
+
+display.camera.posC.x = game.world.player.pos.x;
+display.camera.posC.y = game.world.player.pos.y;
 
 display.background.image.src = "./game_modules/texture/stone-bg.png";
 display.tileSheet.image.src = "./game_modules/texture/tilesheet_stony.png";
