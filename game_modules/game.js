@@ -1,8 +1,7 @@
-import mapFile from "./world/map.js";
-
 export class Game {
-    constructor() {
-        this.world = new World();
+    constructor(level) {
+        this.level = level;
+        this.world = new World(level);
     }
 
     update() {
@@ -10,13 +9,13 @@ export class Game {
     }
 
     reset() {
-        this.world = new World();
+        this.world = new World(this.level);
     }
 }
 
 class World {
-    constructor() {
-        this.level = new Level(JSON.parse(JSON.stringify(mapFile)));
+    constructor(level) {
+        this.level = new Level(JSON.parse(JSON.stringify(level)));
         this.player = new Player();
     }
 
@@ -99,7 +98,7 @@ class Level {
 
 class Player {
     constructor() {
-        this.pos = new Vec2(2, 2);
+        this.pos = new Vec2(1, 9);
         this.oldPos = new Vec2(0, 0);
         this.oldPos.copy(this.pos);
         this.oldDisplayPos = new Vec2(0, 0);

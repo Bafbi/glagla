@@ -1,5 +1,7 @@
 "use strict";
 
+import mapFile from "./game_modules/world/map.js";
+
 //////////////////////
 /// Import modules ///
 //////////////////////
@@ -32,18 +34,60 @@ function update() {
     game.update();
 }
 
+function reload() {
+    display.buffer.canvas.height =
+        game.world.level.height * display.tileSheet.tileSize;
+    display.buffer.canvas.width =
+        game.world.level.width * display.tileSheet.tileSize;
+    display.resize(
+        document.documentElement.clientWidth,
+        document.documentElement.clientHeight,
+        game.world.level.height / game.world.level.width
+    );
+}
+
 ///////////////
 /// Objects ///
 ///////////////
 
 const display = new Display(document.getElementById("gameWindow"));
 const controller = new Controller();
-const game = new Game();
+const game = new Game(mapFile);
 const engine = new Engine(1000 / 30, render, update);
 
 /////////////////
 /// Listeners ///
 /////////////////
+
+const dropArea = document.getElementById("drop-area");
+
+dropArea.addEventListener("dragover", (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    // Style the drag-and-drop as a "copy file" operation.
+    event.dataTransfer.dropEffect = "copy";
+});
+
+dropArea.addEventListener("drop", (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    const fileList = event.dataTransfer.files;
+    console.log(fileList.item(0));
+    if (fileList.length > 1 || fileList.item(0).type != "application/json") {
+        console.error("wrong format : json espected");
+        return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
+        const rawdata = event.target.result;
+        const importLevel = JSON.parse(rawdata);
+        console.log(importLevel);
+        game.level = importLevel;
+        game.reset();
+        reload();
+    });
+    reader.readAsText(fileList.item(0));
+});
 
 window.addEventListener("keydown", (event) =>
     controller.keyDownUp(event.type, event.key)
