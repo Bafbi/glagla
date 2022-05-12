@@ -1,7 +1,7 @@
 export class Game {
     constructor(level) {
-        this.level = level;
-        this.world = new World(level);
+        this.level = JSON.parse(JSON.stringify(level));
+        this.world = new World(this.level);
     }
 
     update() {
@@ -15,8 +15,8 @@ export class Game {
 
 class World {
     constructor(level) {
-        this.level = new Level(JSON.parse(JSON.stringify(level)));
-        this.player = new Player();
+        this.level = new Level(level);
+        this.player = new Player(level.body.start);
     }
 
     update() {
@@ -29,7 +29,8 @@ class World {
             ) ||
             new Vec2(0, 0).isSup(this.player.pos)
         ) {
-            this.player.pos.copy(this.player.oldPos);
+            this.player.pos.sub(this.player.direction);
+            this.player.direction.set(0, 0);
         }
 
         switch (this.level.getObstacle(this.player.pos)) {
@@ -74,11 +75,12 @@ class World {
 ///////////
 
 class Level {
-    constructor(map) {
-        this.height = map.height;
-        this.width = map.width;
-        this.texture = map.texture;
-        this.obstacle = map.data;
+    constructor(level) {
+        this.height = level.header.height;
+        this.width = level.header.width;
+        this.texture = level.body.texture;
+        this.obstacle = level.body.data;
+        this.end = level.body.end;
     }
 
     getObstacle(vec2) {
@@ -97,8 +99,8 @@ class Level {
 ////////////
 
 class Player {
-    constructor() {
-        this.pos = new Vec2(1, 9);
+    constructor(start) {
+        this.pos = new Vec2(start.x, start.y);
         this.oldPos = new Vec2(0, 0);
         this.oldPos.copy(this.pos);
         this.oldDisplayPos = new Vec2(0, 0);

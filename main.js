@@ -73,8 +73,12 @@ dropArea.addEventListener("drop", (event) => {
     event.preventDefault();
     const fileList = event.dataTransfer.files;
     console.log(fileList.item(0));
-    if (fileList.length > 1 || fileList.item(0).type != "application/json") {
-        console.error("wrong format : json espected");
+    if (
+        fileList.length > 1 ||
+        (!fileList.item(0).name.includes(".ice") &&
+            fileList.item(0).type != "application/json")
+    ) {
+        console.error("wrong format : .ice espected");
         return;
     }
     const reader = new FileReader();
