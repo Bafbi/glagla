@@ -4,7 +4,7 @@ export class Controller {
         let down = type == "keydown" ? true : false;
 
         Object.keys(this).forEach((key, index) => {
-            if (this[key].keyCode == code) this[key].setState(down);
+            if (this[key].keyCode.includes(code)) this[key].setState(down);
         });
     }
 

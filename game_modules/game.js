@@ -1,6 +1,6 @@
 export class Game {
     constructor(level) {
-        this.level = JSON.parse(JSON.stringify(level));
+        this.level = JSON.parse(level);
         this.world = new World(this.level);
     }
 

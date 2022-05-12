@@ -1,5 +1,3 @@
-import devTools from "./texture/devTools.js";
-
 export class Display {
     constructor(canvas) {
         this.buffer = document.createElement("canvas").getContext("2d");

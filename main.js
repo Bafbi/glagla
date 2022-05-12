@@ -1,19 +1,34 @@
 "use strict";
 
-import mapFile from "./game_modules/world/map.js";
+//////////////////////////
+//#region *Url param* //
 
-//////////////////////
-/// Import modules ///
-//////////////////////
+import baseLevel from "./game_modules/world/map.js";
+
+let lvl = JSON.stringify(baseLevel);
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("lvl")) {
+    const lvlName = urlParams.get("lvl");
+    lvl = localStorage.getItem(lvlName);
+}
+
+//#endregion            //
+//////////////////////////
+
+////////////////////////////
+//#region *Import modules* ///
 
 import { Display } from "./game_modules/display.js";
 import { Controller } from "./game_modules/controller.js";
 import { Game } from "./game_modules/game.js";
 import { Engine } from "./game_modules/engine.js";
 
-////////////////
-/// Function ///
-////////////////
+//#endregion              //
+////////////////////////////
+
+/////////////////////
+//#region *Function* //
 
 function render() {
     display.drawBackground();
@@ -30,11 +45,11 @@ function update() {
             controller[key].active = controller[key].slow ? false : true;
         }
     });
-
+    // console.log(display.camera);
     game.update();
 }
 
-function reload() {
+function reloadDisplay() {
     display.buffer.canvas.height =
         game.world.level.height * display.tileSheet.tileSize;
     display.buffer.canvas.width =
@@ -46,19 +61,24 @@ function reload() {
     );
 }
 
-///////////////
-/// Objects ///
-///////////////
+//#endregion      //
+/////////////////////
+
+////////////////////
+//#region *Objects* //
 
 const display = new Display(document.getElementById("gameWindow"));
 const controller = new Controller();
-const game = new Game(mapFile);
+const game = new Game(lvl);
 const engine = new Engine(1000 / 30, render, update);
 
-/////////////////
-/// Listeners ///
-/////////////////
+//#endregion      //
+////////////////////
 
+///////////////////////
+//#region *Listeners*//
+
+//#region File loader //
 const dropArea = document.getElementById("drop-area");
 
 dropArea.addEventListener("dragover", (event) => {
@@ -84,18 +104,23 @@ dropArea.addEventListener("drop", (event) => {
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
         const rawdata = event.target.result;
+        localStorage.setItem(fileList.item(0).name, rawdata);
         const importLevel = JSON.parse(rawdata);
         console.log(importLevel);
         game.level = importLevel;
         game.reset();
-        reload();
+        reloadDisplay();
     });
     reader.readAsText(fileList.item(0));
 });
 
-window.addEventListener("keydown", (event) =>
-    controller.keyDownUp(event.type, event.key)
-);
+//#endregion
+
+//#region Controler //
+window.addEventListener("keydown", (event) => {
+    controller.keyDownUp(event.type, event.key);
+    // console.log(event.key);
+});
 window.addEventListener("keyup", (event) =>
     controller.keyDownUp(event.type, event.key)
 );
@@ -106,6 +131,9 @@ window.addEventListener("resize", () =>
         game.world.level.height / game.world.level.width
     )
 );
+//#endregion
+
+//#region Camera //
 window.addEventListener("wheel", (event) => {
     display.camera.zoom += event.deltaY * 0.01;
 });
@@ -129,10 +157,13 @@ window.addEventListener("mousemove", (event) => {
 window.addEventListener("mouseup", (event) => {
     mouseDown = false;
 });
+//#endregion
 
-//////////////
-// Register //
-//////////////
+//#endregion         //
+///////////////////////
+
+//////////////////////////////
+//#region Controle register //
 
 controller.register(
     "cam",
@@ -163,7 +194,7 @@ controller.register(
 );
 controller.register(
     "up",
-    "z",
+    ["z", "ArrowUp"],
     () => {
         if (!game.world.player.moving) game.world.player.move({ x: 0, y: -1 });
     },
@@ -171,7 +202,7 @@ controller.register(
 );
 controller.register(
     "right",
-    "d",
+    ["d", "ArrowRight"],
     () => {
         if (!game.world.player.moving) game.world.player.move({ x: 1, y: 0 });
     },
@@ -179,7 +210,7 @@ controller.register(
 );
 controller.register(
     "down",
-    "s",
+    ["s", "ArrowDown"],
     () => {
         if (!game.world.player.moving) game.world.player.move({ x: 0, y: 1 });
     },
@@ -187,20 +218,20 @@ controller.register(
 );
 controller.register(
     "left",
-    "q",
+    ("q", "ArrowLeft"),
     () => {
         if (!game.world.player.moving) game.world.player.move({ x: -1, y: 0 });
     },
     true
 );
 
+//#endregion                //
+//////////////////////////////
+
 //////////////////
 /// Initialize ///
 //////////////////
-display.buffer.canvas.height =
-    game.world.level.height * display.tileSheet.tileSize;
-display.buffer.canvas.width =
-    game.world.level.width * display.tileSheet.tileSize;
+reloadDisplay();
 
 display.camera.posC.x = game.world.player.pos.x;
 display.camera.posC.y = game.world.player.pos.y;
