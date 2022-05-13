@@ -1,3 +1,5 @@
+import { Vec2 } from "./utils.js";
+
 export class Game {
     constructor(level) {
         this.level = JSON.parse(level);
@@ -101,17 +103,17 @@ class Level {
 class Player {
     constructor(start) {
         this.pos = new Vec2(start.x, start.y);
-        this.oldPos = new Vec2(0, 0);
+        this.oldPos = new Vec2();
         this.oldPos.copy(this.pos);
-        this.oldDisplayPos = new Vec2(0, 0);
+        this.oldDisplayPos = new Vec2();
         this.oldDisplayPos.copy(this.pos);
-        this.displayPos = new Vec2(0, 0);
+        this.displayPos = new Vec2();
         this.displayPos.copy(this.pos);
-        this.motion = new Vec2(0, 0);
-        this.acceleration = new Vec2(0, 0);
+        this.motion = new Vec2();
+        this.acceleration = new Vec2();
         this.moving = false;
         this.freeze = false;
-        this.direction = new Vec2(0, 0);
+        this.direction = new Vec2();
     }
 
     update() {
@@ -190,58 +192,5 @@ class Player {
     distancePosDisplay() {
         const dis = Vec2.sub(this.displayPos, this.pos);
         return { x: Math.abs(dis.x), y: Math.abs(dis.y) };
-    }
-}
-
-///////////
-// Utils //
-///////////
-
-class Vec2 {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    static sub(vec2A, vec2B) {
-        return { x: vec2A.x - vec2B.x, y: vec2A.y - vec2B.y };
-    }
-
-    copy(vec2) {
-        this.x = vec2.x;
-        this.y = vec2.y;
-    }
-
-    add(vec2) {
-        this.x += vec2.x;
-        this.y += vec2.y;
-    }
-
-    sub(vec2) {
-        this.x -= vec2.x;
-        this.y -= vec2.y;
-    }
-
-    multiply_by_cste(cste) {
-        this.x *= cste;
-        this.y *= cste;
-    }
-
-    isSup(vec2) {
-        return this.x > vec2.x || this.y > vec2.y;
-    }
-
-    isSup_of_cste(cste) {
-        return this.x > cste || this.y > cste;
-    }
-
-    reset() {
-        this.x = 0;
-        this.y = 0;
-    }
-
-    set(x, y) {
-        this.x = x;
-        this.y = y;
     }
 }

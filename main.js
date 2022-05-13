@@ -19,6 +19,7 @@ if (urlParams.has("lvl")) {
 ////////////////////////////
 //#region *Import modules* ///
 
+import { Vec2 } from "./game_modules/utils.js";
 import { Display } from "./game_modules/display.js";
 import { Controller } from "./game_modules/controller.js";
 import { Game } from "./game_modules/game.js";
@@ -35,7 +36,6 @@ function render() {
     display.drawTileLevel(game.world.level.texture, game.world.level.width);
     display.drawSpriteLevel(game.world.level.obstacle, game.world.level.width);
     display.drawPlayer(game.world.player.displayPos);
-    display.updateCamera();
     display.render();
 }
 function update() {
@@ -47,6 +47,10 @@ function update() {
     });
     // console.log(display.camera);
     game.update();
+    display.updateCamera(
+        document.documentElement.clientWidth,
+        document.documentElement.clientHeight
+    );
 }
 
 function reloadDisplay() {
@@ -105,6 +109,7 @@ dropArea.addEventListener("drop", (event) => {
     reader.addEventListener("load", (event) => {
         const rawdata = event.target.result;
         localStorage.setItem(fileList.item(0).name, rawdata);
+        window.location.search = `?lvl=${fileList.item(0).name}`;
         const importLevel = JSON.parse(rawdata);
         console.log(importLevel);
         game.level = importLevel;
@@ -164,23 +169,25 @@ window.addEventListener("mouseup", (event) => {
 
 //////////////////////////////
 //#region Controle register //
-
+controller.register(
+    "center",
+    " ",
+    () => {
+        display.camera.posC.copy(game.world.player.pos);
+        console.log(display.camera);
+    },
+    true
+);
 controller.register(
     "cam",
     "m",
     () => {
-        switch (display.camera.mode) {
-            case "ALL":
-                display.camera.mode = "PLAYER";
-                display.camera.posC.x = game.world.player.pos.x;
-                display.camera.posC.y = game.world.player.pos.y;
-                break;
-            case "PLAYER":
-                display.camera.mode = "ALL";
-                break;
-            default:
-                break;
-        }
+        console.log("aa");
+        display.toggleCameraMode(
+            document.documentElement.clientWidth,
+            document.documentElement.clientHeight,
+            game.world.level.height / game.world.level.width
+        );
     },
     true
 );
@@ -218,7 +225,7 @@ controller.register(
 );
 controller.register(
     "left",
-    ("q", "ArrowLeft"),
+    ["q", "ArrowLeft"],
     () => {
         if (!game.world.player.moving) game.world.player.move({ x: -1, y: 0 });
     },
@@ -233,8 +240,7 @@ controller.register(
 //////////////////
 reloadDisplay();
 
-display.camera.posC.x = game.world.player.pos.x;
-display.camera.posC.y = game.world.player.pos.y;
+display.camera.posC.copy(game.world.player.pos);
 
 display.background.image.src = "./game_modules/texture/stone-bg.png";
 display.tileSheet.image.src = "./game_modules/texture/tilesheet_stony.png";

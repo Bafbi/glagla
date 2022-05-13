@@ -1,3 +1,5 @@
+import { Vec2 } from "./utils.js";
+
 export class Display {
     constructor(canvas) {
         this.buffer = document.createElement("canvas").getContext("2d");
@@ -184,6 +186,7 @@ export class Display {
     }
 
     resize(width, height, height_width_ratio) {
+        if (this.camera.mode == "PLAYER") height_width_ratio = height / width;
         if (height / width > height_width_ratio) {
             this.context.canvas.height = width * height_width_ratio;
             this.context.canvas.width = width;
@@ -196,41 +199,47 @@ export class Display {
         this.render();
     }
 
-    updateCamera() {
+    updateCamera(clientWidth, clientHeight) {
         switch (this.camera.mode) {
             case "ALL":
                 {
-                    this.camera.pos1 = {
-                        x: 0,
-                        y: 0,
-                    };
-                    this.camera.pos2 = {
-                        x: this.buffer.canvas.width,
-                        y: this.buffer.canvas.height,
-                    };
+                    this.camera.pos1.reset();
+                    this.camera.pos2.set(
+                        this.buffer.canvas.width,
+                        this.buffer.canvas.height
+                    );
                 }
                 break;
             case "PLAYER":
                 {
                     const zoom = this.camera.zoom;
-                    const ratio =
-                        this.buffer.canvas.width / this.buffer.canvas.height;
+                    const ratio = clientWidth / clientHeight;
                     const x = this.camera.posC.x * this.tileSheet.tileSize;
                     const y = this.camera.posC.y * this.tileSheet.tileSize;
-                    this.camera.pos1 = {
-                        x: x - (this.tileSheet.tileSize + zoom * 2) / ratio,
-                        y: y - zoom,
-                    };
-                    this.camera.pos2 = {
-                        x: (this.tileSheet.tileSize + zoom * 2) * ratio,
-                        y: this.tileSheet.tileSize + zoom * 2,
-                    };
+                    this.camera.pos1.set(
+                        x + this.tileSheet.tileSize / 2 - zoom * ratio,
+                        y + this.tileSheet.tileSize / 2 - zoom
+                    );
+                    this.camera.pos2.set(zoom * 2 * ratio, zoom * 2);
                 }
                 break;
 
             default:
                 break;
         }
+    }
+    toggleCameraMode(width, height, height_width_ratio) {
+        switch (this.camera.mode) {
+            case "ALL":
+                this.camera.mode = "PLAYER";
+                break;
+            case "PLAYER":
+                this.camera.mode = "ALL";
+                break;
+            default:
+                break;
+        }
+        this.resize(width, height, height_width_ratio);
     }
 }
 
@@ -252,8 +261,8 @@ class Camera {
     constructor() {
         this.mode = "ALL";
         this.zoom = 10;
-        this.pos1 = { x: 0, y: 0 };
-        this.pos2 = { x: 10, y: 10 };
-        this.posC = { x: 2, y: 2 };
+        this.pos1 = new Vec2();
+        this.pos2 = new Vec2();
+        this.posC = new Vec2();
     }
 }

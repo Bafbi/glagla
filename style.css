@@ -7,4 +7,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-image: url("./game_modules/texture/glace-bg.png");
+    background-size: 64px;
 }
