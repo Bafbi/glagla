@@ -238,6 +238,12 @@ controller.register(
 //////////////////
 /// Initialize ///
 //////////////////
+export const api = {
+    registerEvent(type, callback) {
+        game.registerEvent(type, callback);
+    },
+};
+
 reloadDisplay();
 
 display.camera.posC.copy(game.world.player.pos);

@@ -1,5 +1,7 @@
 import { Vec2 } from "./utils.js";
 
+const events = new Array();
+
 export class Game {
     constructor(level) {
         this.level = JSON.parse(level);
@@ -12,6 +14,15 @@ export class Game {
 
     reset() {
         this.world = new World(this.level);
+        events
+            .filter((e) => e.type == "onReset")
+            .forEach((e) => {
+                e.callback(this.level);
+            });
+    }
+
+    registerEvent(type, callback) {
+        events.push(new Event(type, callback));
     }
 }
 
@@ -178,6 +189,11 @@ class Player {
             this.moving = true;
             this.direction.copy(direction);
             this.pos.add(direction);
+            events
+                .filter((e) => e.type == "onPlayerMove")
+                .forEach((e) => {
+                    e.callback(this);
+                });
         }
     }
 
@@ -192,5 +208,14 @@ class Player {
     distancePosDisplay() {
         const dis = Vec2.sub(this.displayPos, this.pos);
         return { x: Math.abs(dis.x), y: Math.abs(dis.y) };
+    }
+}
+
+class Event {
+    type;
+    callback;
+    constructor(type, callback) {
+        this.type = type;
+        this.callback = callback;
     }
 }
