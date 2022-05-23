@@ -6,7 +6,7 @@ export class Display {
         this.context = canvas.getContext("2d");
         this.tileSheet = new TileSheet(16, 5);
         this.spriteSheet = new TileSheet(16, 5);
-        this.player = new Sprite(12);
+        this.player = new Sprite(16);
         this.background = new TileSheet(16, 1);
         this.camera = new Camera();
     }
@@ -129,14 +129,14 @@ export class Display {
     drawPlayer(vec2) {
         this.buffer.drawImage(
             this.player.image,
-            2,
+            0,
             0,
             this.player.tileSize,
             this.player.tileSize,
             Math.round(vec2.x * this.tileSheet.tileSize) +
                 (this.tileSheet.tileSize - this.player.tileSize),
             Math.round(vec2.y * this.tileSheet.tileSize) +
-                (this.tileSheet.tileSize - this.player.tileSize) / 2,
+                (this.tileSheet.tileSize - this.player.tileSize),
             this.player.tileSize,
             this.player.tileSize
         );
@@ -260,7 +260,7 @@ class Sprite {
 class Camera {
     constructor() {
         this.mode = "ALL";
-        this.zoom = 10;
+        this.zoom = 60;
         this.pos1 = new Vec2();
         this.pos2 = new Vec2();
         this.posC = new Vec2();
