@@ -3,7 +3,7 @@
 //////////////////////////
 //#region *Url param* //
 
-import baseLevel from "./game_modules/world/map.js";
+import baseLevel from "./level/map.js";
 
 let lvl = JSON.stringify(baseLevel);
 
@@ -32,7 +32,7 @@ import { Engine } from "./game_modules/engine.js";
 //#region *Function* //
 
 function render() {
-    display.drawBackground();
+    // display.drawBackground();
     display.drawTileLevel(game.world.level.texture, game.world.level.width);
     display.drawSpriteLevel(game.world.level.obstacle, game.world.level.width);
     display.drawPlayer(game.world.player.displayPos);
@@ -45,7 +45,6 @@ function update() {
             controller[key].active = controller[key].slow ? false : true;
         }
     });
-    // console.log(display.camera);
     game.update();
     display.updateCamera(
         document.documentElement.clientWidth,
@@ -71,10 +70,12 @@ function reloadDisplay() {
 ////////////////////
 //#region *Objects* //
 
-const display = new Display(document.getElementById("gameWindow"));
+const gameWindow = document.getElementById("gameWindow");
+const display = new Display(gameWindow);
 const controller = new Controller();
 const game = new Game(lvl);
 const engine = new Engine(1000 / 30, render, update);
+const menu = document.getElementById("menu");
 
 //#endregion      //
 ////////////////////
@@ -182,12 +183,12 @@ controller.register(
     "cam",
     "m",
     () => {
-        console.log("aa");
         display.toggleCameraMode(
             document.documentElement.clientWidth,
             document.documentElement.clientHeight,
             game.world.level.height / game.world.level.width
         );
+        display.camera.posC.copy(game.world.player.pos);
     },
     true
 );
@@ -231,6 +232,19 @@ controller.register(
     },
     true
 );
+controller.register(
+    "esc",
+    ["Escape"],
+    () => {
+        // console.log(engine.running);
+
+        menu.classList.toggle("disable");
+        gameWindow.classList.toggle("disable");
+        // if (engine.running) engine.stop();
+        // else engine.start();
+    },
+    true
+);
 
 //#endregion                //
 //////////////////////////////
@@ -248,10 +262,10 @@ reloadDisplay();
 
 display.camera.posC.copy(game.world.player.pos);
 
-display.background.image.src = "./game_modules/texture/stone-bg.png";
-display.tileSheet.image.src = "./game_modules/texture/tilesheet_stony.png";
-display.spriteSheet.image.src = "./game_modules/texture/spritesheet_stony.png";
-display.player.image.src = "./game_modules/texture/spriteplayer.png";
+display.background.image.src = "./assets/stone-bg.png";
+display.tileSheet.image.src = "./assets/tilesheet_stony.png";
+display.spriteSheet.image.src = "./assets/spritesheet_stony.png";
+display.player.image.src = "./assets/idle-down-sheet.png";
 
 display.background.image.onload = () => {
     display.resize(

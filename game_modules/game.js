@@ -138,7 +138,7 @@ class Player {
         this.motion.add(this.acceleration);
         this.displayPos.add(this.motion);
 
-        this.motion.multiply_by_cste(0.7);
+        this.motion.multiply_by_cste(0.9);
         this.acceleration.multiply_by_cste(0.9);
 
         if (
