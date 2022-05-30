@@ -33,30 +33,42 @@ import { Engine } from "./game_modules/engine.js";
 
 function render() {
     // display.drawBackground();
-    display.drawTileLevel(game.world.level.texture, game.world.level.width);
-    display.drawSpriteLevel(game.world.level.obstacle, game.world.level.width);
-    display.drawPlayer(game.world.player.displayPos);
+    display.drawMap(game.world.level.data, game.world.level.width);
+    display.drawWall(game.world.level.width, game.world.level.height);
+    display.drawTile(
+        { x: game.world.level.end.x + 1, y: game.world.level.end.y + 1 },
+        19
+    );
+    display.drawTile(
+        { x: game.world.level.start.x + 1, y: game.world.level.start.y + 1 },
+        18
+    );
+    display.drawPlayer(
+        game.world.player.displayPos,
+        game.world.player.lastDir,
+        game.world.player.animation.currentAnim,
+        game.world.player.animation.currentFrame
+    );
+    display.updateCamera();
     display.render();
 }
 function update() {
     Object.keys(controller).forEach((key, index) => {
         if (controller[key].active) {
             controller[key].callback();
-            controller[key].active = controller[key].slow ? false : true;
+            controller[key].active = !controller[key].slow;
         }
     });
+    game.world.player.animation.update(engine.time);
+    // console.log(engine.time);
     game.update();
-    display.updateCamera(
-        document.documentElement.clientWidth,
-        document.documentElement.clientHeight
-    );
 }
 
 function reloadDisplay() {
     display.buffer.canvas.height =
-        game.world.level.height * display.tileSheet.tileSize;
+        (game.world.level.height + 2) * display.tileSheet.tileSize;
     display.buffer.canvas.width =
-        game.world.level.width * display.tileSheet.tileSize;
+        (game.world.level.width + 2) * display.tileSheet.tileSize;
     display.resize(
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,
@@ -111,7 +123,7 @@ dropArea.addEventListener("drop", (event) => {
         const rawdata = event.target.result;
         localStorage.setItem(fileList.item(0).name, rawdata);
         window.location.search = `?lvl=${fileList.item(0).name}`;
-        const importLevel = JSON.parse(rawdata);
+        const importLevel = JSON.parsetion(rawdata);
         console.log(importLevel);
         game.level = importLevel;
         game.reset();
@@ -141,7 +153,7 @@ window.addEventListener("resize", () =>
 
 //#region Camera //
 window.addEventListener("wheel", (event) => {
-    display.camera.zoom += event.deltaY * 0.01;
+    display.camera.zoom += event.deltaY * 0.01 * (display.camera.zoom / 80);
 });
 
 let mouseDown = false;
@@ -154,8 +166,10 @@ window.addEventListener("mousedown", (event) => {
 });
 window.addEventListener("mousemove", (event) => {
     if (mouseDown) {
-        display.camera.posC.x += (event.clientX - startX) * -0.02;
-        display.camera.posC.y += (event.clientY - startY) * -0.02;
+        display.camera.posC.x +=
+            (event.clientX - startX) * -0.02 * (display.camera.zoom / 100);
+        display.camera.posC.y +=
+            (event.clientY - startY) * -0.02 * (display.camera.zoom / 100);
         startX = event.clientX;
         startY = event.clientY;
     }
@@ -245,6 +259,16 @@ controller.register(
     },
     true
 );
+controller.register(
+    "edit",
+    ["e"],
+    () => {
+        window.location =
+            "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
+            JSON.stringify(game.world.level);
+    },
+    true
+);
 
 //#endregion                //
 //////////////////////////////
@@ -263,9 +287,9 @@ reloadDisplay();
 display.camera.posC.copy(game.world.player.pos);
 
 display.background.image.src = "./assets/stone-bg.png";
-display.tileSheet.image.src = "./assets/tilesheet_stony.png";
+display.tileSheet.image.src = "./assets/tilesheet.png";
 display.spriteSheet.image.src = "./assets/spritesheet_stony.png";
-display.player.image.src = "./assets/idle-down-sheet.png";
+display.player.image.src = "./assets/player.png";
 
 display.background.image.onload = () => {
     display.resize(

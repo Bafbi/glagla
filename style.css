@@ -36,8 +36,6 @@ body {
     transition: all cubic-bezier(0, 0, 0.32, 0.91) 1.5s;
 }
 
-
-
 #menu.disable {
     opacity: 0;
     transform:scale(1000%);

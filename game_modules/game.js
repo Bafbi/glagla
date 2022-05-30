@@ -43,15 +43,21 @@ class World {
             new Vec2(0, 0).isSup(this.player.pos)
         ) {
             this.player.pos.sub(this.player.direction);
-            this.player.direction.set(0, 0);
+            this.player.direction.reset();
         }
 
-        switch (this.level.getObstacle(this.player.pos)) {
-            case 2: {
+        switch (this.level.getdata(this.player.pos)) {
+            case -3:
+                {
+                    this.player.direction.reset();
+                }
+                break;
+            case 5: {
                 const dis = Vec2.sub(this.player.displayPos, this.player.pos);
                 if (Math.abs(dis.x) > 0.3 || Math.abs(dis.y) > 0.3) break;
-                this.level.setObstacle(this.player.pos, 3);
+                this.level.setdata(this.player.pos, 3);
             }
+
             case -1:
                 {
                     this.player.pos.add(this.player.direction);
@@ -65,14 +71,32 @@ class World {
                 }
                 break;
             case 1:
+            case 2:
+            case 3:
+            case 4:
                 {
                     if (!this.player.moving) {
-                        this.player.direction.set(0, 1);
+                        switch (this.level.getdata(this.player.pos)) {
+                            case 1:
+                                this.player.direction.set(0, -1);
+                                break;
+                            case 2:
+                                this.player.direction.set(1, 0);
+                                break;
+                            case 3:
+                                this.player.direction.set(0, 1);
+                                break;
+                            case 4:
+                                this.player.direction.set(-1, 0);
+                                break;
+                            default:
+                                break;
+                        }
                         this.player.move(this.player.direction);
                     }
                 }
                 break;
-            case 3:
+            case 6:
                 {
                     this.player.freeze = true;
                 }
@@ -91,17 +115,17 @@ class Level {
     constructor(level) {
         this.height = level.header.height;
         this.width = level.header.width;
-        this.texture = level.body.texture;
-        this.obstacle = level.body.data;
+        this.data = level.body.data;
         this.end = level.body.end;
+        this.start = level.body.start;
     }
 
-    getObstacle(vec2) {
-        return this.obstacle[vec2.y * this.width + vec2.x];
+    getdata(vec2) {
+        return this.data[vec2.y * this.width + vec2.x];
     }
 
-    setObstacle(vec2, value) {
-        this.obstacle[vec2.y * this.width + vec2.x] = value;
+    setdata(vec2, value) {
+        this.data[vec2.y * this.width + vec2.x] = value;
     }
 
     update() {}
@@ -125,10 +149,23 @@ class Player {
         this.moving = false;
         this.freeze = false;
         this.direction = new Vec2();
+        this.lastDir = new Vec2(0, 1);
+        this.animation = new Animation();
+        this.animation.addAnim("idle", 4, 200);
+        this.animation.addAnim("walk", 4, 100);
     }
 
     update() {
+        this.animation.update();
         this.updateOldDisplay();
+        if (this.direction.x != 0 || this.direction.y != 0) {
+            this.lastDir.copy(this.direction);
+        }
+        if (this.moving) {
+            this.animation.currentAnim = "walk";
+        } else {
+            this.animation.currentAnim = "idle";
+        }
 
         if (this.displayPos.x < this.pos.x) this.acceleration.x += 0.006;
         if (this.displayPos.x > this.pos.x) this.acceleration.x -= 0.006;
@@ -163,8 +200,8 @@ class Player {
 
         const dis = this.distancePosDisplay();
         if (
-            dis.x < 0.1 &&
-            dis.y < 0.1
+            dis.x < 0.2 &&
+            dis.y < 0.2
             // this.pos.x == Math.round(this.displayPos.x) &&
             // this.pos.y == Math.round(this.displayPos.y)
         ) {
@@ -217,5 +254,33 @@ class Event {
     constructor(type, callback) {
         this.type = type;
         this.callback = callback;
+    }
+}
+
+class Animation {
+    constructor() {
+        this.lastTime = 0;
+        this.anims = {};
+        this.currentAnim = "idle";
+        this.currentFrame = 0;
+    }
+
+    update(time) {
+        if (time > this.lastTime + this.anims[this.currentAnim].speed) {
+            this.lastTime = time;
+            this.currentFrame =
+                (this.currentFrame + 1) % this.anims[this.currentAnim].nbFrame;
+        }
+    }
+
+    addAnim(name, nbFrame, speed) {
+        this.anims[name] = new Anim(speed, nbFrame);
+    }
+}
+
+class Anim {
+    constructor(speed, nbFrame) {
+        this.speed = speed;
+        this.nbFrame = nbFrame;
     }
 }
