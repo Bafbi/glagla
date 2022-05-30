@@ -29,7 +29,7 @@ export class Game {
 class World {
     constructor(level) {
         this.level = new Level(level);
-        this.player = new Player(level.body.start);
+        this.player = new Player(level.start);
     }
 
     update() {
@@ -113,11 +113,11 @@ class World {
 
 class Level {
     constructor(level) {
-        this.height = level.header.height;
-        this.width = level.header.width;
-        this.data = level.body.data;
-        this.end = level.body.end;
-        this.start = level.body.start;
+        this.height = level.height;
+        this.width = level.width;
+        this.data = level.data;
+        this.end = level.end;
+        this.start = level.start;
     }
 
     getdata(vec2) {

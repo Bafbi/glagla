@@ -10,7 +10,18 @@ let lvl = JSON.stringify(baseLevel);
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has("lvl")) {
     const lvlName = urlParams.get("lvl");
-    lvl = localStorage.getItem(lvlName);
+    const localLvl = localStorage.getItem(lvlName);
+    if (localLvl !== null) {
+        lvl = localLvl;
+    } else {
+        console.warn(`Level ${lvlName} not found`);
+    }
+} else if (urlParams.has("map-data")) {
+    lvl = decodeURI(urlParams.get("map-data"));
+    if (urlParams.has("map-id")) {
+        localStorage.setItem(urlParams.get("map-id"), lvl);
+        window.location.search = "lvl=" + urlParams.get("map-id");
+    }
 }
 
 //#endregion            //
@@ -251,9 +262,21 @@ controller.register(
     ["Escape"],
     () => {
         // console.log(engine.running);
-
         menu.classList.toggle("disable");
         gameWindow.classList.toggle("disable");
+        // if (engine.running) engine.stop();
+        // else engine.start();
+    },
+    true
+);
+controller.register(
+    "return",
+    ["v"],
+    () => {
+        // console.log(engine.running);
+        window.location = "http://localhost/game.php";
+        // menu.classList.toggle("disable");
+        // gameWindow.classList.toggle("disable");
         // if (engine.running) engine.stop();
         // else engine.start();
     },
@@ -264,8 +287,11 @@ controller.register(
     ["e"],
     () => {
         window.location =
-            "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
+            "http://10.222.5.146:8080/?map-data=" +
             JSON.stringify(game.world.level);
+        // window.location =
+        //     "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
+        //     JSON.stringify(game.world.level);
     },
     true
 );
