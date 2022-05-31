@@ -282,3 +282,32 @@ body {
 .range input::-moz-range-progress{
   background: #664AFF;
 }
+
+#oui{
+    margin-left:225px;
+    transform:scale(0.125);
+    padding-right:18.3%;
+    padding-bottom:39%;
+    margin-top:50px;
+}
+
+.play{
+    background: url(assets/high.svg) no-repeat;
+    position: absolute;
+    width: 8%;
+    height: 24%;
+    z-index: 1000000;
+    left: 6%;
+    border: none;
+    transform:scale(0.9);
+}
+.mute{
+    background: url(assets/mute.svg) no-repeat;
+    position: absolute;
+    width: 8%;
+    height: 22%;
+    z-index: 1000000;
+    left: 6%;
+    border: none;
+    transform:scale(0.7);
+}
