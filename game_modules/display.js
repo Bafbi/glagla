@@ -5,15 +5,16 @@ export class Display {
         this.buffer = document.createElement("canvas").getContext("2d");
         this.context = canvas.getContext("2d");
         this.tileSheet = new TileSheet(16, 5);
-        this.spriteSheet = new TileSheet(16, 5);
         this.player = new Sprite(16);
-        this.background = new TileSheet(16, 1);
         this.camera = new Camera();
     }
 
     fill(context, color) {
         context.fillStyle = color;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    }
+    clear(context) {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     }
     drawRectangle(x, y, width, height, color) {
         this.buffer.fillStyle = color;
@@ -233,7 +234,8 @@ export class Display {
     }
 
     render() {
-        this.fill(this.context, "black");
+        // this.fill(this.context, "black");
+        this.clear(this.context);
         this.context.drawImage(
             this.buffer.canvas,
             this.camera.pos1.x,

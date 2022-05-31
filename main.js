@@ -43,7 +43,6 @@ import { Engine } from "./game_modules/engine.js";
 //#region *Function* //
 
 function render() {
-    // display.drawBackground();
     display.drawMap(game.world.level.data, game.world.level.width);
     display.drawWall(game.world.level.width, game.world.level.height);
     display.drawTile(
@@ -287,7 +286,7 @@ controller.register(
     ["e"],
     () => {
         window.location =
-            "http://10.222.5.146:8080/?map-data=" +
+            "http://192.168.56.1:8080/?map-data=" +
             JSON.stringify(game.world.level);
         // window.location =
         //     "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
@@ -312,12 +311,10 @@ reloadDisplay();
 
 display.camera.posC.copy(game.world.player.pos);
 
-display.background.image.src = "./assets/stone-bg.png";
 display.tileSheet.image.src = "./assets/tilesheet.png";
-display.spriteSheet.image.src = "./assets/spritesheet_stony.png";
 display.player.image.src = "./assets/player.png";
 
-display.background.image.onload = () => {
+display.tileSheet.image.onload = () => {
     display.resize(
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,

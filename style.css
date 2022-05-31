@@ -9,9 +9,9 @@ body {
     justify-content: center;
     width: 100vw;
     height: 100vh;
-    /* background-image: url("./game_modules/texture/glace-bg.png"); */
-    background-color: black;
-    background-size: 64px;
+    background-image: url("./assets/ice2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
     overflow: hidden;
     transition: all cubic-bezier(0, 0, 0.32, 0.91) 2s;
 
