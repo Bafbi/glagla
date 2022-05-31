@@ -8,12 +8,11 @@
     <title>testing</title>
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="./main.js"></script>
-    <script src="./menu.js"></script>
   </head>
   <body>
     <div id="menu" class="disable">
       <a id="home" href="index.php">
-        <img id="exitt" src="rs/exit1.png" alt="exit" />
+        <img id="exitt" src="./assets/exit1.png" alt="exit" />
       </a>
       <input class="gamebutton" type="submit" value="PLAY" />
       <input class="gamebutton" type="submit" value="CREATE" />
@@ -35,7 +34,7 @@
           <div class="range">
             <div class="sliderValue">
               <img
-                src="rs/volume1.png"
+                src="assets/volume1.png"
                 alt="exit"
                 style="
                   position: absolute;
@@ -79,4 +78,6 @@
     <div id="drop-area"></div>
     <canvas id="gameWindow"></canvas>
   </body>
+
+  <script src="./menu.js"></script>
 </html>

@@ -15,9 +15,10 @@ body {
 }
 
 #drop-area {
-    position: absolute; 
+    position: absolute;
     width: 100vw; 
     height: 100vh;
+    z-index: -1;
 }
 
 #menu {
@@ -81,10 +82,12 @@ body {
     margin-bottom : 20px;
     transition: all linear 0.2s;
     background-color:#D8FDFD;
+    z-index: -1;
 }
 
 .gamebutton:hover{
     transform: scale(110%);
+    z-index: -1;
     background-color:#63C3FD;
 }
 
@@ -95,7 +98,7 @@ body {
 }
 
 #exitt:hover{
-    content:url("rs/exit2.png")
+    content:url("assets/exit2.png")
 }
 /*Fin*/
 
