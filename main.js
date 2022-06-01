@@ -10,7 +10,18 @@ let lvl = JSON.stringify(baseLevel);
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has("lvl")) {
     const lvlName = urlParams.get("lvl");
-    lvl = localStorage.getItem(lvlName);
+    const localLvl = localStorage.getItem(lvlName);
+    if (localLvl !== null) {
+        lvl = localLvl;
+    } else {
+        console.warn(`Level ${lvlName} not found`);
+    }
+} else if (urlParams.has("map-data")) {
+    lvl = decodeURI(urlParams.get("map-data"));
+    if (urlParams.has("map-id")) {
+        localStorage.setItem(urlParams.get("map-id"), lvl);
+        window.location.search = "lvl=" + urlParams.get("map-id");
+    }
 }
 
 //#endregion            //
@@ -32,7 +43,6 @@ import { Engine } from "./game_modules/engine.js";
 //#region *Function* //
 
 function render() {
-    // display.drawBackground();
     display.drawMap(game.world.level.data, game.world.level.width);
     display.drawWall(game.world.level.width, game.world.level.height);
     display.drawTile(
@@ -251,9 +261,21 @@ controller.register(
     ["Escape"],
     () => {
         // console.log(engine.running);
-
         menu.classList.toggle("disable");
         gameWindow.classList.toggle("disable");
+        // if (engine.running) engine.stop();
+        // else engine.start();
+    },
+    true
+);
+controller.register(
+    "return",
+    ["v"],
+    () => {
+        // console.log(engine.running);
+        window.location = "http://localhost/game.php";
+        // menu.classList.toggle("disable");
+        // gameWindow.classList.toggle("disable");
         // if (engine.running) engine.stop();
         // else engine.start();
     },
@@ -264,8 +286,11 @@ controller.register(
     ["e"],
     () => {
         window.location =
-            "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
+            "http://192.168.56.1:8080/?map-data=" +
             JSON.stringify(game.world.level);
+        // window.location =
+        //     "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
+        //     JSON.stringify(game.world.level);
     },
     true
 );
@@ -286,12 +311,10 @@ reloadDisplay();
 
 display.camera.posC.copy(game.world.player.pos);
 
-display.background.image.src = "./assets/stone-bg.png";
 display.tileSheet.image.src = "./assets/tilesheet.png";
-display.spriteSheet.image.src = "./assets/spritesheet_stony.png";
 display.player.image.src = "./assets/player.png";
 
-display.background.image.onload = () => {
+display.tileSheet.image.onload = () => {
     display.resize(
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,
