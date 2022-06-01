@@ -17,5 +17,5 @@ function playPause() {
 const volumeInput = document.getElementById("sound-volume");
 
 volumeInput.addEventListener("input", () => {
-    music.volume = volumeInput.value;
+    music.volume = volumeInput.value / 100;
 });
