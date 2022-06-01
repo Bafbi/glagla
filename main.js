@@ -22,6 +22,10 @@ if (urlParams.has("lvl")) {
         localStorage.setItem(urlParams.get("map-id"), lvl);
         window.location.search = "lvl=" + urlParams.get("map-id");
     }
+    localStorage.setItem("tmp-level", lvl);
+    window.location.search = "";
+} else if (localStorage.getItem("tmp-level") !== null) {
+    lvl = localStorage.getItem("tmp-level");
 }
 
 //#endregion            //
@@ -112,14 +116,14 @@ let keyBlock = false;
 //#region File loader //
 const dropArea = document.getElementById("drop-area");
 
-dropArea.addEventListener("dragover", (event) => {
+window.addEventListener("dragover", (event) => {
     event.stopPropagation();
     event.preventDefault();
     // Style the drag-and-drop as a "copy file" operation.
     event.dataTransfer.dropEffect = "copy";
 });
 
-dropArea.addEventListener("drop", (event) => {
+window.addEventListener("drop", (event) => {
     event.stopPropagation();
     event.preventDefault();
     const fileList = event.dataTransfer.files;
@@ -336,19 +340,10 @@ export const api = {
     },
 };
 
-reloadDisplay();
-
-display.camera.posC.copy(game.world.player.pos);
-
 display.tileSheet.image.src = "./assets/tilesheet.png";
 display.player.image.src = "./assets/player.png";
 
 display.tileSheet.image.onload = () => {
-    display.resize(
-        document.documentElement.clientWidth,
-        document.documentElement.clientHeight,
-        game.world.level.height / game.world.level.width
-    );
-
+    reloadDisplay();
     engine.start();
 };

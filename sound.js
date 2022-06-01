@@ -1,31 +1,21 @@
-var audio = document.getElementById("audio");
-var playPauseBTN = document.getElementById("playPauseBTN");
-var count = 0;
-
-playPauseBTN.addEventListener("click", playPause);
-
-// function playPause() {
-//   console.log("aa");
-//   let A = new Audio("music/theme.mp3");
-//   if (count == 0) {
-//     count = 1;
-//     A.play();
-//   } else {
-//     count = 0;
-//     A.pause();
-//   }
-// }
+const music = document.createElement("audio");
+music.setAttribute("id", "music");
+music.setAttribute("src", "music/theme.mp3");
+music.setAttribute("type", "audio/mp3");
+music.setAttribute("controls", "controls");
+music.setAttribute("autoplay", "autoplay");
+music.setAttribute("loop", "loop");
+music.style.display = "none";
+document.body.appendChild(music);
 
 function playPause() {
-  mediaPlayer = document.getElementById("music");
-  mediaPlayer2 = document.getElementById("oui");
-
-  console.log(mediaPlayer2);
-  if (mediaPlayer.paused) {
-    mediaPlayer2.className = "play";
-    mediaPlayer.play();
-  } else {
-    mediaPlayer2.className = "mute";
-    mediaPlayer.pause();
-  }
+    console.log(`${music.paused}`);
+    music.paused ? music.play() : music.pause();
+    playPauseBTN.classList.toggle("mute");
 }
+
+const volumeInput = document.getElementById("sound-volume");
+
+volumeInput.addEventListener("input", () => {
+    music.volume = volumeInput.value;
+});
