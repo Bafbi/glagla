@@ -66,7 +66,7 @@ export class Display {
         );
     }
 
-    drawPath(data, mapWidth, index, pos) {
+    drawFloor(data, mapWidth, index, pos) {
         if (
             data[index - 1] >= -1 &&
             data[index + 1] >= -1 &&
@@ -86,9 +86,9 @@ export class Display {
                 Math.floor(index / mapWidth) + 1
             );
             switch (value) {
-                case -3: // path
+                case -3: // floor
                     {
-                        this.drawPath(data, mapWidth, index, pos);
+                        this.drawFloor(data, mapWidth, index, pos);
                     }
                     break;
                 case -2: // wall

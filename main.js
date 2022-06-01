@@ -63,12 +63,15 @@ function render() {
     display.render();
 }
 function update() {
-    Object.keys(controller).forEach((key, index) => {
-        if (controller[key].active) {
-            controller[key].callback();
-            controller[key].active = !controller[key].slow;
-        }
-    });
+    if (!keyBlock) {
+        Object.keys(controller).forEach((key, index) => {
+            if (controller[key].active) {
+                controller[key].callback();
+                controller[key].active = !controller[key].slow;
+            }
+        });
+    }
+
     game.world.player.animation.update(engine.time);
     // console.log(engine.time);
     game.update();
@@ -98,6 +101,7 @@ const controller = new Controller();
 const game = new Game(lvl);
 const engine = new Engine(1000 / 30, render, update);
 const menu = document.getElementById("menu");
+let keyBlock = false;
 
 //#endregion      //
 ////////////////////
@@ -285,12 +289,37 @@ controller.register(
     "edit",
     ["e"],
     () => {
-        window.location =
-            "http://192.168.56.1:8080/?map-data=" +
-            JSON.stringify(game.world.level);
+        window.location = localStorage.getItem("editorUrl")
+            ? localStorage.getItem("editorUrl")
+            : "https://bafbi.github.io/2d-tilemap-editor/" +
+              "?map-data=" +
+              JSON.stringify(game.world.level);
         // window.location =
         //     "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
         //     JSON.stringify(game.world.level);
+    },
+    true
+);
+
+controller.register(
+    "edit",
+    ["E"],
+    () => {
+        keyBlock = true;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Editor Url";
+        input.style =
+            "position: absolute; top: 50%; left: 50%; width: 10rem; height: 2rem;";
+        document.body.appendChild(input);
+        input.focus();
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                localStorage.setItem("editorUrl", input.value);
+                input.remove();
+                keyBlock = false;
+            }
+        });
     },
     true
 );
