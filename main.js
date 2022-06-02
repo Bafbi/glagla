@@ -7,7 +7,7 @@ import baseLevel from "./level/map.js";
 
 let lvl = JSON.stringify(baseLevel);
 
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search); // get url params
 if (urlParams.has("lvl")) {
     const lvlName = urlParams.get("lvl");
     const localLvl = localStorage.getItem(lvlName);
@@ -47,24 +47,24 @@ import { Engine } from "./game_modules/engine.js";
 //#region *Function* //
 
 function render() {
-    display.drawMap(game.world.level.data, game.world.level.width);
-    display.drawWall(game.world.level.width, game.world.level.height);
+    display.drawMap(game.world.level.data, game.world.level.width); // draw the map
+    display.drawWall(game.world.level.width, game.world.level.height); // draw the walls
     display.drawTile(
         { x: game.world.level.end.x + 1, y: game.world.level.end.y + 1 },
         19
-    );
+    ); // draw the end tile
     display.drawTile(
         { x: game.world.level.start.x + 1, y: game.world.level.start.y + 1 },
         18
-    );
+    ); // draw the start tile
     display.drawPlayer(
         game.world.player.displayPos,
         game.world.player.lastDir,
         game.world.player.animation.currentAnim,
         game.world.player.animation.currentFrame
-    );
-    display.updateCamera();
-    display.render();
+    ); // draw the player
+    display.updateCamera(); // update camera
+    display.render(); // render the game
 }
 function update() {
     if (!keyBlock) {
@@ -76,20 +76,20 @@ function update() {
         });
     }
 
-    game.world.player.animation.update(engine.time);
+    game.world.player.animation.update(engine.time); // update animation
     // console.log(engine.time);
-    game.update();
+    game.update(); // update the game
 }
 
 function reloadDisplay() {
     display.buffer.canvas.height =
         (game.world.level.height + 2) * display.tileSheet.tileSize;
     display.buffer.canvas.width =
-        (game.world.level.width + 2) * display.tileSheet.tileSize;
+        (game.world.level.width + 2) * display.tileSheet.tileSize; // +2 for the walls
     display.resize(
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,
-        game.world.level.height / game.world.level.width
+        (game.world.level.height + 2) / (game.world.level.width + 2) // aspect ratio
     );
 }
 
@@ -160,13 +160,13 @@ window.addEventListener("keydown", (event) => {
 window.addEventListener("keyup", (event) =>
     controller.keyDownUp(event.type, event.key)
 );
-window.addEventListener("resize", () =>
+window.addEventListener("resize", () => {
     display.resize(
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,
-        game.world.level.height / game.world.level.width
-    )
-);
+        (game.world.level.height + 2) / (game.world.level.width + 2) // aspect ratio
+    );
+});
 //#endregion
 
 //#region Camera //
@@ -218,7 +218,7 @@ controller.register(
         display.toggleCameraMode(
             document.documentElement.clientWidth,
             document.documentElement.clientHeight,
-            game.world.level.height / game.world.level.width
+            (game.world.level.height + 2) / (game.world.level.width + 2)
         );
         display.camera.posC.copy(game.world.player.pos);
     },
@@ -293,11 +293,10 @@ controller.register(
     "edit",
     ["e"],
     () => {
-        window.location = localStorage.getItem("editorUrl")
-            ? localStorage.getItem("editorUrl")
-            : "https://bafbi.github.io/2d-tilemap-editor/" +
-              "?map-data=" +
-              JSON.stringify(game.world.level);
+        window.location =
+            localStorage.getItem("editorUrl") +
+            "?map-data=" +
+            JSON.stringify(game.world.level);
         // window.location =
         //     "https://bafbi.github.io/2d-tilemap-editor/?map-data=" +
         //     JSON.stringify(game.world.level);
@@ -306,7 +305,7 @@ controller.register(
 );
 
 controller.register(
-    "edit",
+    "changeUrl",
     ["E"],
     () => {
         keyBlock = true;
