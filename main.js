@@ -162,13 +162,14 @@ window.addEventListener("drop", (event) => {
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
         const rawdata = event.target.result;
-        localStorage.setItem(fileList.item(0).name, rawdata);
-        window.location.search = `?lvl=${fileList.item(0).name}`;
-        const importLevel = JSON.parsetion(rawdata);
-        console.log(importLevel);
-        game.level = importLevel;
-        game.reset();
-        reloadDisplay();
+        localStorage.setItem("tmp-level", rawdata);
+        localStorage.setItem("tmp_id", null);
+        window.location.search = "";
+        // const importLevel = JSON.parsetion(rawdata);
+        // console.log(importLevel);
+        // game.level = importLevel;
+        // game.reset();
+        // reloadDisplay();
     });
     reader.readAsText(fileList.item(0));
 });
