@@ -105,6 +105,10 @@ class World {
                 break;
         }
     }
+
+    distanceOfEnd() {
+        return Vec2.sub(this.player.displayPos, this.level.end).modulus();
+    }
 }
 
 ///////////
@@ -150,6 +154,7 @@ class Player {
         this.freeze = false;
         this.direction = new Vec2();
         this.lastDir = new Vec2(0, 1);
+        this.moveCount = 0;
         this.animation = new Animation();
         this.animation.addAnim("idle", 4, 200);
         this.animation.addAnim("walk", 4, 100);
@@ -226,6 +231,7 @@ class Player {
             this.moving = true;
             this.direction.copy(direction);
             this.pos.add(direction);
+            this.moveCount++;
             events
                 .filter((e) => e.type == "onPlayerMove")
                 .forEach((e) => {

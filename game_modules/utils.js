@@ -5,7 +5,7 @@ export class Vec2 {
     }
 
     static sub(vec2A, vec2B) {
-        return { x: vec2A.x - vec2B.x, y: vec2A.y - vec2B.y };
+        return new Vec2(vec2A.x - vec2B.x, vec2A.y - vec2B.y);
     }
 
     copy(vec2) {
@@ -44,5 +44,9 @@ export class Vec2 {
     set(x, y) {
         this.x = x;
         this.y = y;
+    }
+
+    modulus() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 }

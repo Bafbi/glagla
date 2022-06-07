@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
 * {
     padding: 0;
     margin: 0;
@@ -239,4 +241,19 @@ body {
 }
 .mute {
     background: url(assets/mute.svg) no-repeat;
+}
+
+.move-counter {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-family: "Press Start 2P", cursive;
+    color: black;
+    /* background-color: #63c3fd; */
+    padding: 0.8rem 0.6rem 0.6rem 5.5rem;
+    background-image: url(assets/move_counter.png);
+    background-size: contain;
+    image-rendering: pixelated;
+    background-position: center;
+    background-repeat: no-repeat;
 }

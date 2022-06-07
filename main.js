@@ -8,19 +8,11 @@ import baseLevel from "./level/map.js";
 let lvl = JSON.stringify(baseLevel);
 
 const urlParams = new URLSearchParams(window.location.search); // get url params
-if (urlParams.has("lvl")) {
-    const lvlName = urlParams.get("lvl");
-    const localLvl = localStorage.getItem(lvlName);
-    if (localLvl !== null) {
-        lvl = localLvl;
-    } else {
-        console.warn(`Level ${lvlName} not found`);
-    }
-} else if (urlParams.has("map-data")) {
+
+if (urlParams.has("map-data")) {
     lvl = decodeURI(urlParams.get("map-data"));
     if (urlParams.has("map-id")) {
-        localStorage.setItem(urlParams.get("map-id"), lvl);
-        window.location.search = "lvl=" + urlParams.get("map-id");
+        localStorage.setItem("tmp_id", urlParams.get("map-id"));
     }
     localStorage.setItem("tmp-level", lvl);
     window.location.search = "";
@@ -65,6 +57,7 @@ function render() {
     ); // draw the player
     display.updateCamera(); // update camera
     display.render(); // render the game
+    counter.innerHTML = game.world.player.moveCount; // update the counter
 }
 function update() {
     if (!keyBlock) {
@@ -78,6 +71,13 @@ function update() {
 
     game.world.player.animation.update(engine.time); // update animation
     // console.log(engine.time);
+    console.log(game.world.distanceOfEnd());
+    if (game.world.distanceOfEnd() < 0.3) {
+        post("http://localhost/completed.php", {
+            id: localStorage.getItem("tmp_id"),
+            move: game.world.player.moveCount,
+        });
+    }
     game.update(); // update the game
 }
 
@@ -93,6 +93,28 @@ function reloadDisplay() {
     );
 }
 
+function post(path, params, method = "post") {
+    // The rest of this code assumes you are not using a library.
+    // It can be made less verbose if you use one.
+    const form = document.createElement("form");
+    form.method = method;
+    form.action = path;
+
+    for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+            const hiddenField = document.createElement("input");
+            hiddenField.type = "hidden";
+            hiddenField.name = key;
+            hiddenField.value = params[key];
+
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
 //#endregion      //
 /////////////////////
 
@@ -105,6 +127,7 @@ const controller = new Controller();
 const game = new Game(lvl);
 const engine = new Engine(1000 / 30, render, update);
 const menu = document.getElementById("menu");
+const counter = document.getElementById("move-counter");
 let keyBlock = false;
 
 //#endregion      //
