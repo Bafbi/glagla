@@ -15,7 +15,8 @@ if (urlParams.has("map-data")) {
         localStorage.setItem("tmp_id", urlParams.get("map-id"));
     }
     localStorage.setItem("tmp-level", lvl);
-    window.location.replace("/");
+
+    window.location.replace(window.location.pathname + "/");
 } else if (localStorage.getItem("tmp-level") !== null) {
     lvl = localStorage.getItem("tmp-level");
 }
@@ -74,14 +75,10 @@ function update() {
     if (game.world.distanceOfEnd() < 0.2 && !game.win) {
         game.win = true;
         game.world.player.pos.copy(game.world.player.displayPos);
-        if (localStorage.getItem("tmp_id") !== null) {
-            post("http://localhost/completed.php", {
-                id: localStorage.getItem("tmp_id"),
-                move: game.world.player.moveCount,
-            });
-        } else {
-            game.reset();
-        }
+        post("http://localhost/completed.php", {
+            id: localStorage.getItem("tmp_id"),
+            move: game.world.player.moveCount,
+        });
     }
 
     game.update(); // update the game
