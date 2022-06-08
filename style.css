@@ -16,6 +16,7 @@ body {
     background-size: cover;
     overflow: hidden;
     transition: all cubic-bezier(0, 0, 0.32, 0.91) 2s;
+    image-rendering: pixelated;
 }
 
 #drop-area {
@@ -253,7 +254,6 @@ body {
     padding: 0.8rem 0.6rem 0.6rem 5.5rem;
     background-image: url(assets/move_counter.png);
     background-size: contain;
-    image-rendering: pixelated;
     background-position: center;
     background-repeat: no-repeat;
 }
