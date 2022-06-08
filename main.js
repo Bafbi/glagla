@@ -11,12 +11,13 @@ const urlParams = new URLSearchParams(window.location.search); // get url params
 
 if (urlParams.has("map-data")) {
     lvl = decodeURI(urlParams.get("map-data"));
+
     if (urlParams.has("map-id")) {
         localStorage.setItem("tmp_id", urlParams.get("map-id"));
     }
     localStorage.setItem("tmp-level", lvl);
 
-    window.location.replace(window.location.pathname + "/");
+    window.location.replace(window.location.pathname);
 } else if (localStorage.getItem("tmp-level") !== null) {
     lvl = localStorage.getItem("tmp-level");
 }
