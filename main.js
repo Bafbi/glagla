@@ -8,7 +8,7 @@ import baseLevel from "./level/map.js";
 let lvl = JSON.stringify(baseLevel);
 
 const urlParams = new URLSearchParams(window.location.search); // get url params
-const path = [];
+let path = [];
 
 if (urlParams.has("map-data")) {
     lvl = decodeURI(urlParams.get("map-data"));
