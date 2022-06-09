@@ -14,7 +14,7 @@ if (urlParams.has("map-data")) {
     lvl = decodeURI(urlParams.get("map-data"));
 
     if (urlParams.has("path")) {
-        path.push(...urlParams.get("path").split(","));
+        path = JSON.parse(urlParams.get("path"));
         localStorage.setItem("tmp_path", path);
     } else localStorage.setItem("tmp_path", "[]");
 
@@ -27,7 +27,7 @@ if (urlParams.has("map-data")) {
 } else if (localStorage.getItem("tmp-level") !== null) {
     lvl = localStorage.getItem("tmp-level");
     if (localStorage.getItem("tmp_path") !== null) {
-        path.push(...localStorage.getItem("tmp_path").split(","));
+        path = JSON.parse(localStorage.getItem("tmp_path"));
     }
 }
 
