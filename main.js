@@ -16,7 +16,7 @@ if (urlParams.has("map-data")) {
     if (urlParams.has("path")) {
         path.push(...urlParams.get("path").split(","));
         localStorage.setItem("tmp_path", path);
-    }
+    } else localStorage.setItem("tmp_path", "[]");
 
     if (urlParams.has("map-id")) {
         localStorage.setItem("tmp_id", urlParams.get("map-id"));
