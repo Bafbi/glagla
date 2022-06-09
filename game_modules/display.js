@@ -164,6 +164,18 @@ export class Display {
         this.drawTile(new Vec2(mapWidth + 1, mapHeight + 1), 14);
     }
 
+    drawPath(path, mapWidth) {
+        path.forEach((index) => {
+            this.drawRectangle(
+                (Math.floor(index / mapWidth) + 1) * this.tileSheet.tileSize,
+                ((index % mapWidth) + 1) * this.tileSheet.tileSize,
+                this.tileSheet.tileSize,
+                this.tileSheet.tileSize,
+                "rgba(0,0,0,0.5)"
+            );
+        });
+    }
+
     drawPlayer(pos, dir, anim, frame) {
         let direction;
         if (dir.x > 0) {

@@ -56,7 +56,7 @@ class World {
             case 5: {
                 const dis = Vec2.sub(this.player.displayPos, this.player.pos);
                 if (Math.abs(dis.x) > 0.3 || Math.abs(dis.y) > 0.3) break;
-                this.level.setdata(this.player.pos, 3);
+                this.level.setdata(this.player.pos, 6);
             }
 
             case -1:

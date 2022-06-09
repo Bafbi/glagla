@@ -22,11 +22,22 @@
                     <source src="music/theme.mp3" type="audio/mpeg" />
                 </audio> -->
             </div>
-            <a id="home" href="index.php">
+            <a id="home" href="http://localhost/">
                 <img id="exitt" src="./assets/exit1.png" alt="exit" />
             </a>
-            <input class="gamebutton" type="submit" value="PLAY" />
-            <input class="gamebutton" type="submit" value="CREATE" />
+            <input
+                class="gamebutton"
+                type="submit"
+                id="continue_btn"
+                value="CONTINUE"
+            />
+
+            <input
+                class="gamebutton"
+                id="edit_btn"
+                type="submit"
+                value="EDIT"
+            />
             <!-- Boutons settings -->
             <div class="modal-container">
                 <div class="overlay modal-trigger"></div>
@@ -77,13 +88,6 @@
                 value="OPTIONS"
             />
             <!-- Fin bouton settings -->
-            <input
-                class="gamebutton"
-                type="submit"
-                name="soumission"
-                id="soumission"
-                value="CREDITS"
-            />
         </div>
         <div id="move-counter" class="move-counter">0</div>
         <div id="drop-area"></div>

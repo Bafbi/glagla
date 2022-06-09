@@ -8,9 +8,15 @@ import baseLevel from "./level/map.js";
 let lvl = JSON.stringify(baseLevel);
 
 const urlParams = new URLSearchParams(window.location.search); // get url params
+const path = [];
 
 if (urlParams.has("map-data")) {
     lvl = decodeURI(urlParams.get("map-data"));
+
+    if (urlParams.has("path")) {
+        path.push(...urlParams.get("path").split(","));
+        localStorage.setItem("tmp_path", path);
+    }
 
     if (urlParams.has("map-id")) {
         localStorage.setItem("tmp_id", urlParams.get("map-id"));
@@ -20,7 +26,10 @@ if (urlParams.has("map-data")) {
     window.location.replace(window.location.pathname);
 } else if (localStorage.getItem("tmp-level") !== null) {
     lvl = localStorage.getItem("tmp-level");
+    path.push(...localStorage.getItem("tmp_path").split(","));
 }
+
+console.log(path);
 
 //#endregion            //
 //////////////////////////
@@ -51,6 +60,7 @@ function render() {
         { x: game.world.level.start.x + 1, y: game.world.level.start.y + 1 },
         18
     ); // draw the start tile
+    if (cheat) display.drawPath(path, game.world.level.width); // draw the path
     display.drawPlayer(
         game.world.player.displayPos,
         game.world.player.lastDir,
@@ -133,6 +143,7 @@ const engine = new Engine(1000 / 30, render, update);
 const menu = document.getElementById("menu");
 const counter = document.getElementById("move-counter");
 let keyBlock = false;
+let cheat = false;
 
 //#endregion      //
 ////////////////////
@@ -196,6 +207,22 @@ window.addEventListener("resize", () => {
     );
 });
 //#endregion
+
+const ctn_btn = document.getElementById("continue_btn");
+
+ctn_btn.addEventListener("click", () => {
+    menu.classList.toggle("disable");
+    gameWindow.classList.toggle("disable");
+});
+
+const edit_btn = document.getElementById("edit_btn");
+
+edit_btn.addEventListener("click", () => {
+    window.location =
+        localStorage.getItem("editorUrl") +
+        "?map-data=" +
+        JSON.stringify(game.world.level);
+});
 
 //#region Camera //
 window.addEventListener("wheel", (event) => {
@@ -351,6 +378,14 @@ controller.register(
                 keyBlock = false;
             }
         });
+    },
+    true
+);
+controller.register(
+    "cheat",
+    ["c"],
+    () => {
+        cheat = !cheat;
     },
     true
 );
