@@ -14,7 +14,8 @@ if (urlParams.has("map-data")) {
     lvl = decodeURI(urlParams.get("map-data"));
 
     if (urlParams.has("path")) {
-        path = JSON.parse(urlParams.get("path"));
+        path = urlParams.get("path");
+        console.log(path);
         localStorage.setItem("tmp_path", path);
     } else localStorage.setItem("tmp_path", "[]");
 
