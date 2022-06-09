@@ -26,7 +26,9 @@ if (urlParams.has("map-data")) {
     window.location.replace(window.location.pathname);
 } else if (localStorage.getItem("tmp-level") !== null) {
     lvl = localStorage.getItem("tmp-level");
-    path.push(...localStorage.getItem("tmp_path").split(","));
+    if (localStorage.getItem("tmp_path") !== null) {
+        path.push(...localStorage.getItem("tmp_path").split(","));
+    }
 }
 
 console.log(path);
