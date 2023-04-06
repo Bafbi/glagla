@@ -1,6 +1,6 @@
 const music = document.createElement("audio");
 music.setAttribute("id", "music");
-music.setAttribute("src", "music/theme.mp3");
+music.setAttribute("src", "music/Ice_Path.mp3");
 music.setAttribute("type", "audio/mp3");
 music.setAttribute("controls", "controls");
 music.setAttribute("autoplay", "autoplay");

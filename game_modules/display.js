@@ -173,6 +173,13 @@ export class Display {
                 this.tileSheet.tileSize,
                 "rgba(0,0,0,0.5)"
             );
+            // this.drawRectangle(
+            //     ((index % mapWidth) + 1) * this.tileSheet.tileSize,
+            //     (Math.floor(index / mapWidth) + 1) * this.tileSheet.tileSize,
+            //     this.tileSheet.tileSize,
+            //     this.tileSheet.tileSize,
+            //     "rgba(0,0,0,0.5)"
+            // );
         });
     }
 
